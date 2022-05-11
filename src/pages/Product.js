@@ -1,7 +1,7 @@
 import React from "react"
 import Navbar from "../component/Navbar"
 import ProductList from "../component/ProductList"
-import { base_url, product_image_url } from "../Config.js";
+import { base_url } from "../Config.js";
 import axios from "axios"
 
 

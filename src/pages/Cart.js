@@ -9,8 +9,8 @@ export default class Cart extends React.Component{
         super()
         this.state = {
             token: "",
-            customerID: "",
-            customerName: "",
+            idUser: "",
+            namaUser: "",
             cart: [], // untuk menyimpan list cart
             total: 0, // untuk menyimpan data total belanja
         }
@@ -37,15 +37,15 @@ export default class Cart extends React.Component{
         if(localStorage.getItem("customer") !== null){
             let customer = JSON.parse(localStorage.getItem("customer"))
             this.setState({
-                customerID: customer.customer_id,
-                customerName: customer.name
+                idUser: customer.idUser,
+                namaUser: customer.namaUser
             })
         }
  
         // kalkulasi total harga
         let totalHarga = 0;
         tempCart.map(item => {
-            totalHarga += (item.price * item.qty)
+            totalHarga += (item.hargaProduk * item.qty)
         })
  
         // memasukkan data cart, user, dan total harga pada state
@@ -70,7 +70,7 @@ export default class Cart extends React.Component{
  
                         <div className="card-body">
                             <h5 className="text-primary">
-                                Customer: { this.state.customerName }
+                                namaProduk: { this.state.namaProduk }
                             </h5>
  
                             <table className="table table-bordered">
@@ -87,11 +87,11 @@ export default class Cart extends React.Component{
                                 <tbody>
                                     { this.state.cart.map( (item, index) => (
                                         <tr key={index}>
-                                            <td>{item.name}</td>
-                                            <td>Rp {item.price}</td>
+                                            <td>{item.namaUser}</td>
+                                            <td>Rp {item.hargaProduk}</td>
                                             <td>{item.qty}</td>
                                             <td className="text-right">
-                                                Rp { item.price * item.qty }
+                                                Rp { item.hargaProduk * item.qty }
                                             </td>
                                             <td>
                                                 <button className="btn btn-sm btn-info m-1"
@@ -131,7 +131,7 @@ export default class Cart extends React.Component{
             tempCart = JSON.parse(localStorage.getItem("cart"))
         }
  
-        let index = tempCart.findIndex(it => it.product_id === selectedItem.product_id)
+        let index = tempCart.findIndex(it => it.product_id === selectedItem.idProduk)
         let promptJumlah = window.prompt(`Masukkan jumlah ${selectedItem.name} yang beli`,selectedItem.qty)
         tempCart[index].qty = promptJumlah
  
@@ -148,7 +148,7 @@ export default class Cart extends React.Component{
                 tempCart = JSON.parse(localStorage.getItem("cart"))
             }
  
-            let index = tempCart.findIndex(it => it.product_id === selectedItem.product_id)
+            let index = tempCart.findIndex(it => it.idProduk === selectedItem.idProduk)
             tempCart.splice(index, 1)
  
             // update localStorage
@@ -165,11 +165,11 @@ export default class Cart extends React.Component{
         }
  
         let data = {
-            customer_id: this.state.customerID,
+            idUser: this.state.idUser,
             detail_transaksi: tempCart
         }
- 
-        let url = base_url + "/transaksi"
+        //masih bingung
+        let url = base_url + "/gettransaksi"
         
         axios.post(url, data, this.headerConfig())
         .then(response => {
