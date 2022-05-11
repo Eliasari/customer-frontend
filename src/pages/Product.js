@@ -12,6 +12,14 @@ export default class Product extends React.Component {
         this.state = {
             products: [],
             token: "",
+            action: "",
+            namaProduk: "",
+            deskripsiProduk: "",
+            hargaProduk: 0,
+            fotoProduk: "",
+            uploadFile: true,
+            idProduk: "",
+            selectedItem: null
         }
         if (localStorage.getItem("token")) {
             this.state.token = localStorage.getItem("token")
@@ -28,10 +36,11 @@ export default class Product extends React.Component {
         return header
     }
     getProduct = () => {
-        let url = base_url + "/product"
+        let url = base_url + "/getProduk"
         axios.get(url, this.headerConfig())
             .then(response => {
-                this.setState({ products: response.data })
+                this.setState({ products: response.data.produk })
+                console.log(response)
             })
             .catch(error => {
                 if (error.response) {
@@ -57,11 +66,11 @@ export default class Product extends React.Component {
                     <div className="row">
                         {this.state.products.map(item => (
                             <ProductList
-                                key={item.product_id}
-                                name={item.name}
-                                price={item.price}
-                                stock={item.stock}
-                                image={product_image_url + "/" + item.image}
+                                key={item.idProduk}
+                                namaProduk={item.namaProduk}
+                                deskripsiProduk={item.deskripsiProduk}
+                                hargaProduk={item.hargaProduk}
+                                fotoProduk={`http://localhost:8000/images/${item.fotoProduk}`}
                                 onCart={() => this.addToCart(item)}
                             />
                         ))}
@@ -73,31 +82,31 @@ export default class Product extends React.Component {
     addToCart = (selectedItem) => {
         // membuat sebuah variabel untuk menampung cart sementara
         let tempCart = []
- 
+
         // cek eksistensi dari data cart pada localStorage
-        if(localStorage.getItem("cart") !== null){
+        if (localStorage.getItem("cart") !== null) {
             tempCart = JSON.parse(localStorage.getItem("cart"))
             // JSON.parse() digunakan untuk mengonversi dari string -> array object
         }
- 
+
         // cek data yang dipilih user ke keranjang belanja
-        let existItem = tempCart.find(item => item.product_id === selectedItem.product_id)
- 
-        if(existItem){
+        let existItem = tempCart.find(item => item.idProduk === selectedItem.idProduk)
+
+        if (existItem) {
             // jika item yang dipilih ada pada keranjang belanja
-            window.alert(`Anda telah memilih ${selectedItem.name}`)
-        }else{
+            window.alert(`Anda telah memilih ${selectedItem.namaProduk}`)
+        } else {
             // user diminta memasukkan jumlah item yang dibeli
-            let promptJumlah = window.prompt(`Masukkan jumlah ${selectedItem.name} yang beli`,"")
-            if(promptJumlah !== null && promptJumlah !== ""){
+            let promptJumlah = window.prompt(`Masukkan jumlah ${selectedItem.name} yang beli`, "")
+            if (promptJumlah !== null && promptJumlah !== "") {
                 // jika user memasukkan jumlah item yg dibeli
- 
+
                 // menambahkan properti "jumlahBeli" pada item yang dipilih
                 selectedItem.qty = promptJumlah
-                
+
                 // masukkan item yg dipilih ke dalam cart
                 tempCart.push(selectedItem)
- 
+
                 // simpan array tempCart ke localStorage
                 localStorage.setItem("cart", JSON.stringify(tempCart))
             }
